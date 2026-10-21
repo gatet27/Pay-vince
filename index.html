@@ -1,0 +1,1682 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vince Pay</title>
+
+  <style>
+    :root {
+      --ink: #0b051d;
+      --pink: #ffa8cd;
+      --light: #f5f5f7;
+      --text: #373544;
+      --muted: #706e7b;
+      --border: #85818e;
+      --line: #e6e6e8;
+      --error: #ac3054;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--light);
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 18px;
+    }
+
+    button, input, select {
+      font: inherit;
+    }
+
+    button { cursor: pointer; }
+
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible {
+      outline: 3px solid var(--ink);
+      outline-offset: 3px;
+    }
+
+    .shell {
+      max-width: 600px;
+      min-height: calc(100dvh - 64px);
+      margin: 32px auto;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      overflow: hidden;
+    }
+
+    header {
+      height: 100px;
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .logo {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 11px 17px;
+      border-radius: 12px;
+      background: var(--pink);
+      font-size: 25px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    .logo span { font-weight: 600; }
+
+    .icon-button {
+      width: 44px;
+      height: 44px;
+      display: inline-grid;
+      place-items: center;
+      background: transparent;
+      color: var(--ink);
+      border: 0;
+      border-radius: 50%;
+    }
+
+    .header-space {
+      width: 44px;
+      height: 44px;
+    }
+
+    svg {
+      flex-shrink: 0;
+      vertical-align: middle;
+    }
+
+    .progress {
+      height: 3px;
+      margin: 0 24px;
+      background: var(--light);
+    }
+
+    .progress span {
+      display: block;
+      height: 100%;
+      background: var(--pink);
+      transition: width 180ms ease;
+    }
+
+    main {
+      padding: 30px 36px;
+      outline: none;
+      animation: appear 180ms ease;
+    }
+
+    .notice {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      margin: 16px 0;
+      font-size: 30px;
+      line-height: 1.15;
+      font-weight: 800;
+      letter-spacing: -1px;
+    }
+
+    h2 {
+      font-size: 22px;
+      line-height: 1.2;
+      letter-spacing: -.4px;
+    }
+
+    p {
+      margin: 14px 0 24px;
+      color: var(--text);
+      line-height: 1.45;
+    }
+
+    .fine {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .center { text-align: center; }
+
+    .button {
+      width: 100%;
+      min-height: 56px;
+      padding: 16px 20px;
+      margin-top: 14px;
+      border: 0;
+      border-radius: 999px;
+      background: var(--ink);
+      color: #fff;
+      font-size: 18px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .button:active {
+      background: #30273e;
+    }
+
+    .button.secondary {
+      background: var(--light);
+      color: var(--ink);
+    }
+
+    .button:disabled {
+      opacity: .55;
+      cursor: wait;
+    }
+
+    .link {
+      padding: 3px 0;
+      border: 0;
+      background: transparent;
+      color: inherit;
+      text-decoration: underline;
+      text-decoration-color: currentColor;
+      text-underline-offset: 3px;
+      text-decoration-thickness: 1px;
+    }
+
+    .field {
+      position: relative;
+      min-height: 66px;
+      margin: 16px 0;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: #fff;
+    }
+
+    .field:focus-within {
+      border-color: var(--ink);
+      box-shadow: inset 0 0 0 1px var(--ink);
+    }
+
+    .field input {
+      width: 100%;
+      height: 66px;
+      padding: 27px 16px 8px;
+      background: transparent;
+      border: 0;
+      border-radius: inherit;
+      outline: none;
+      color: var(--ink);
+      min-width: 0;
+    }
+
+    .field label {
+      position: absolute;
+      left: 16px;
+      top: 22px;
+      color: var(--muted);
+      pointer-events: none;
+      font-size: 18px;
+      transition: top 180ms ease, font-size 180ms ease;
+    }
+
+    .field input:focus + label,
+    .field input:not(:placeholder-shown) + label {
+      top: 8px;
+      font-size: 14px;
+    }
+
+    .field.with-icon input { padding-left: 54px; }
+    .field.with-icon label { left: 54px; }
+
+    .field > svg {
+      position: absolute;
+      left: 17px;
+      top: 22px;
+    }
+
+    .field .help {
+      position: absolute;
+      right: 4px;
+      top: 11px;
+    }
+
+    .field.has-help input { padding-right: 50px; }
+
+    .group {
+      margin: 18px 0;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+    }
+
+    .group .field {
+      margin: 0;
+      border: 0;
+      border-bottom: 1px solid var(--line);
+      border-radius: 0;
+    }
+
+    .group .field:last-child { border-bottom: 0; }
+
+    .phone-box {
+      display: flex;
+      align-items: stretch;
+      margin: 16px 0;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+    }
+
+    .phone-box:focus-within {
+      border-color: var(--ink);
+      box-shadow: inset 0 0 0 1px var(--ink);
+    }
+
+    .prefix {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 76px;
+      padding: 0 16px;
+      border-right: 1px solid var(--line);
+    }
+
+    .phone-box .field {
+      flex: 1;
+      min-width: 0;
+      margin: 0;
+      border: 0;
+      border-radius: 0;
+    }
+
+    .phone-box .field:focus-within { box-shadow: none; }
+
+    .row {
+      width: 100%;
+      padding: 20px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      background: transparent;
+      color: var(--ink);
+      border: 0;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+    }
+
+    .country {
+      padding: 15px 16px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      margin: 24px 0 12px;
+      font-size: 16px;
+    }
+
+    .country span { flex: 1; }
+
+    .benefits {
+      display: grid;
+      gap: 20px;
+      margin: 30px 0;
+    }
+
+    .benefit {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      color: var(--text);
+      font-size: 16px;
+      line-height: 1.4;
+    }
+
+    .check {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin: 24px 0;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .check input {
+      flex-shrink: 0;
+      width: 22px;
+      height: 22px;
+      accent-color: var(--ink);
+    }
+
+    .error-box {
+      background: #fde2e2 !important;
+      border-color: #e52b62 !important;
+    }
+
+    .error-message {
+      font-size: 14px;
+      color: var(--error);
+      margin: 8px 2px;
+      animation: appear 150ms ease;
+    }
+
+    .avatar {
+      width: 72px;
+      height: 72px;
+      margin: 12px auto 20px;
+      border-radius: 50%;
+      background: var(--pink);
+      display: grid;
+      place-items: center;
+      font-size: 25px;
+      font-weight: 700;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 8px;
+      background: #ffe3ef;
+      font-size: 12px;
+    }
+
+    .green {
+      margin: 24px 0;
+      padding: 20px;
+      background: #ccf9d4;
+      color: #00552f;
+      border-radius: 18px;
+      line-height: 1.5;
+    }
+
+    .green p { color: inherit; margin-bottom: 0; }
+
+    .card {
+      position: relative;
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      margin: 14px 0;
+      cursor: pointer;
+      transition: background 150ms ease;
+    }
+
+    .card.selected {
+      padding: 23px;
+      border: 2px solid var(--ink);
+      background: #fafafa;
+    }
+
+    .card h2 { margin: 16px 0 10px; }
+    .card p { font-size: 15px; margin-bottom: 8px; }
+
+    .radio {
+      position: absolute;
+      right: 22px;
+      top: 22px;
+      width: 24px;
+      height: 24px;
+      border: 1px solid #aaa;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+    }
+
+    .selected .radio {
+      background: var(--pink);
+      border-color: var(--pink);
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin: 24px 0;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .divider::before,
+    .divider::after {
+      content: "";
+      height: 1px;
+      flex: 1;
+      background: var(--line);
+    }
+
+    .fixed-label {
+      display: block;
+      font-size: 14px;
+      margin: 18px 0 8px;
+    }
+
+    .test-input, select {
+      width: 100%;
+      padding: 18px 14px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      color: var(--ink);
+      background: #fff;
+    }
+
+    .columns {
+      display: flex;
+      gap: 16px;
+    }
+
+    .columns > div { flex: 1; min-width: 0; }
+
+    .art {
+      width: 260px;
+      height: 240px;
+      position: relative;
+      margin: 24px auto;
+    }
+
+    .orb {
+      position: absolute;
+      width: 180px;
+      height: 180px;
+      top: 24px;
+      left: 40px;
+      background: var(--pink);
+      border-radius: 50%;
+    }
+
+    .art-card {
+      position: absolute;
+      top: 70px;
+      left: 32px;
+      width: 190px;
+      height: 110px;
+      padding: 22px;
+      border-radius: 20px;
+      background: var(--ink);
+      color: #fff;
+      transform: rotate(-10deg);
+      box-shadow: 10px 12px 0 #ffd6e8;
+      animation: float 3s ease-in-out infinite;
+      text-align: left;
+    }
+
+    .art-coin {
+      position: absolute;
+      right: 0;
+      bottom: 25px;
+      width: 64px;
+      height: 64px;
+      border: 6px solid #b7eec1;
+      border-radius: 50%;
+      background: #ccf9d4;
+      color: #00552f;
+      display: grid;
+      place-items: center;
+      animation: float 3s .5s ease-in-out infinite;
+    }
+
+    .spinner {
+      width: 21px;
+      height: 21px;
+      display: inline-block;
+      border: 2px solid #ddd;
+      border-top-color: var(--ink);
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+    }
+
+    .success {
+      width: 90px;
+      height: 90px;
+      margin: 24px auto;
+      background: #ccf9d4;
+      color: #00552f;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+    }
+
+    footer {
+      padding: 8px 28px 28px;
+      text-align: center;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px 16px;
+      margin-bottom: 18px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    dialog {
+      max-width: 420px;
+      width: calc(100% - 32px);
+      max-height: 90dvh;
+      overflow-y: auto;
+      padding: 28px;
+      border: 0;
+      border-radius: 26px;
+      color: var(--ink);
+      background: white;
+      animation: appear 220ms ease;
+    }
+
+    dialog::backdrop { background: #0b051d70; }
+
+    .modal-close {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    dialog p { font-size: 16px; }
+
+    .app-icon {
+      display: grid;
+      place-items: center;
+      width: 74px;
+      height: 74px;
+      margin: 10px 0 20px;
+      background: var(--pink);
+      border-radius: 20px;
+      font-size: 36px;
+      font-weight: 800;
+    }
+
+    .sr {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+    }
+
+    @keyframes appear {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes float { 50% { translate: 0 -8px; } }
+
+    @media (max-width: 620px) {
+      body { background: #fff; }
+
+      .shell {
+        margin: 0;
+        min-height: 100dvh;
+        border: 0;
+        border-radius: 0;
+      }
+
+      main { padding: 28px 24px; }
+
+      dialog {
+        width: 100%;
+        max-width: none;
+        margin: auto 0 0;
+        border-radius: 26px 26px 0 0;
+        padding: 24px 24px 36px;
+      }
+    }
+
+    @media (max-width: 350px) {
+      h1 { font-size: 27px; }
+      main { padding: 24px 20px; }
+      .columns { display: block; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="shell">
+    <header id="header"></header>
+    <div class="progress" aria-hidden="true">
+      <span id="progress"></span>
+    </div>
+    <main id="main" tabindex="-1"></main>
+    <footer id="footer"></footer>
+  </div>
+
+  <dialog id="modal" aria-labelledby="modal-title"></dialog>
+  <div id="live" class="sr" role="status" aria-live="polite"></div>
+
+  <script>
+    const $ = selector => document.querySelector(selector);
+    const STORAGE_KEY = "vince-pay-profile-v2";
+
+    const countries = {
+      France:     { dial: "+33", max: 9, groups: [1, 2, 2, 2, 2] },
+      Belgique:   { dial: "+32", max: 9, groups: [3, 2, 2, 2] },
+      Suisse:     { dial: "+41", max: 9, groups: [2, 3, 2, 2] },
+      Luxembourg: { dial: "+352", max: 9, groups: [3, 3, 3] },
+      Canada:     { dial: "+1", max: 10, groups: [3, 3, 4] }
+    };
+
+    const profileKeys = [
+      "phone", "country", "email", "news", "first", "last",
+      "birth", "address", "extra", "postal", "city",
+      "choice", "lastStep"
+    ];
+
+    let profile = {};
+    let errors = {};
+    let code = "";
+    let timer;
+    let modalOrigin;
+
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+      for (const key of profileKeys) {
+        if (Object.hasOwn(saved, key)) profile[key] = saved[key];
+      }
+    } catch {}
+
+    let step = profile.phone ? "return" : 1;
+
+    function escapeHTML(value) {
+      return String(value ?? "").replace(/[&<>"']/g, character => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      }[character]));
+    }
+
+    function announce(message) {
+      $("#live").textContent = message;
+    }
+
+    function save() {
+      const safeProfile = {};
+
+      for (const key of profileKeys) {
+        if (Object.hasOwn(profile, key)) {
+          safeProfile[key] = profile[key];
+        }
+      }
+
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(safeProfile));
+      } catch {
+        announce("Le profil reste disponible uniquement pendant cette session.");
+      }
+    }
+
+    function icon(name, size = 22) {
+      const paths = {
+        back: '<path d="m14 5-7 7 7 7M7 12h14"/>',
+        close: '<path d="m6 6 12 12M6 18 18 6"/>',
+        chevron: '<path d="m9 5 7 7-7 7"/>',
+        phone: '<rect x="6" y="2" width="12" height="20" rx="3"/><path d="M10 18h4"/>',
+        mail: '<rect x="2" y="4" width="20" height="16" rx="3"/><path d="m3 6 9 7 9-7"/>',
+        lock: '<rect x="5" y="10" width="14" height="12" rx="3"/><path d="M8 10V6a4 4 0 0 1 8 0v4"/>',
+        check: '<path d="m5 12 4 4L19 6"/>',
+        info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v1"/>',
+        shield: '<path d="M12 2 3 6v6c0 6 9 10 9 10s9-4 9-10V6Z"/><path d="m8 12 3 3 5-6"/>',
+        spark: '<path d="m12 2 3 7 7 3-7 3-3 7-3-7-7-3 7-3Z"/>',
+        card: '<rect x="2" y="4" width="20" height="16" rx="3"/><path d="M2 9h20M6 15h4"/>',
+        calendar: '<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 2v6M17 2v6M3 11h18"/>',
+        globe: '<circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18"/>'
+      };
+
+      return `<svg width="${size}" height="${size}"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="1.7" stroke-linecap="round"
+        stroke-linejoin="round" aria-hidden="true">
+        ${paths[name] || paths.info}
+      </svg>`;
+    }
+
+    function button(text, action, secondary = false) {
+      return `<button type="button"
+        class="button ${secondary ? "secondary" : ""}"
+        data-action="${action}">${text}</button>`;
+    }
+
+    function link(text, action) {
+      return `<button type="button" class="link"
+        data-action="${action}">${text}</button>`;
+    }
+
+    function field(id, label, options = {}) {
+      const value = id === "code" ? code : profile[id];
+      const invalid = Boolean(errors[id]);
+
+      return `
+        <div class="field
+          ${options.icon ? "with-icon" : ""}
+          ${options.help ? "has-help" : ""}
+          ${invalid ? "error-box" : ""}">
+          ${options.icon ? icon(options.icon) : ""}
+          <input
+            id="${id}"
+            name="${id}"
+            value="${escapeHTML(value)}"
+            placeholder=" "
+            type="${options.type || "text"}"
+            ${options.numeric ? 'inputmode="numeric"' : ""}
+            ${options.max ? `maxlength="${options.max}"` : ""}
+            autocomplete="off"
+            ${invalid
+              ? `aria-invalid="true" aria-describedby="error-${id}"`
+              : ""}>
+          <label for="${id}">${label}</label>
+          ${options.help ? `
+            <button type="button" class="icon-button help"
+              data-action="birth-help"
+              aria-label="Aide sur la date de naissance">
+              ${icon("info")}
+            </button>` : ""}
+        </div>
+        ${invalid ? `
+          <p class="error-message" id="error-${id}">
+            ${icon("info", 15)} ${errors[id]}
+          </p>` : ""}
+      `;
+    }
+
+    function countryConfig() {
+      return countries[profile.country] || countries.France;
+    }
+
+    function formatPhone(value) {
+      const config = countryConfig();
+      let digits = value.replace(/\D/g, "");
+
+      if (value.trim().startsWith(config.dial)) {
+        digits = digits.slice(config.dial.length - 1);
+      } else if (digits.startsWith("00" + config.dial.slice(1))) {
+        digits = digits.slice(config.dial.length + 1);
+      }
+
+      if (config.dial !== "+1") digits = digits.replace(/^0/, "");
+
+      digits = digits.slice(0, config.max);
+
+      const groups = [];
+      let position = 0;
+
+      for (const size of config.groups) {
+        if (position < digits.length) {
+          groups.push(digits.slice(position, position + size));
+        }
+        position += size;
+      }
+
+      return groups.join(" ");
+    }
+
+    function fullPhone() {
+      return `${countryConfig().dial} ${profile.phone || ""}`;
+    }
+
+    function parseBirth(value) {
+      const match = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(value || "");
+      if (!match) return null;
+
+      const day = Number(match[1]);
+      const month = Number(match[2]);
+      const year = Number(match[3]);
+      const date = new Date(Date.UTC(year, month - 1, day));
+
+      if (
+        year < 1900 ||
+        date.getUTCFullYear() !== year ||
+        date.getUTCMonth() !== month - 1 ||
+        date.getUTCDate() !== day
+      ) return null;
+
+      return { day, month, year };
+    }
+
+    function ageInYears(value) {
+      const birth = parseBirth(value);
+      if (!birth) return null;
+
+      const parts = new Intl.DateTimeFormat("fr-FR", {
+        timeZone: "Europe/Paris",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+      }).formatToParts(new Date());
+
+      const get = type => Number(parts.find(part => part.type === type).value);
+
+      let age = get("year") - birth.year;
+
+      if (
+        get("month") < birth.month ||
+        (get("month") === birth.month && get("day") < birth.day)
+      ) age--;
+
+      return age;
+    }
+
+    function isAdult() {
+      const age = ageInYears(profile.birth);
+      return age !== null && age >= 18;
+    }
+
+    function initials() {
+      return escapeHTML(
+        ((profile.first || "V")[0] + (profile.last || "P")[0]).toUpperCase()
+      );
+    }
+
+    function go(next) {
+      clearTimeout(timer);
+      errors = {};
+
+      if (typeof next === "number" && next >= 5 && !isAdult()) {
+        step = 4;
+        validate();
+        return;
+      }
+
+      step = next;
+
+      if (typeof next === "number" && next !== 6) {
+        profile.lastStep = next;
+      }
+
+      save();
+      render();
+      $("#main").focus();
+      window.scrollTo(0, 0);
+
+      if (next === 6) {
+        timer = setTimeout(() => go(7), 1400);
+      }
+    }
+
+    function validate() {
+      errors = {};
+      const required = "Ce champ est obligatoire.";
+
+      if (step === 1) {
+        const digits = (profile.phone || "").replace(/\D/g, "");
+
+        if (digits.length !== countryConfig().max) {
+          errors.phone = "Saisissez un numéro complet pour le pays sélectionné.";
+        }
+      }
+
+      if (step === 2 && !/^\d{6}$/.test(code)) {
+        errors.code = "Saisissez un code de 6 chiffres.";
+      }
+
+      if (
+        step === 3 &&
+        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(profile.email || "")
+      ) {
+        errors.email = "Saisissez une adresse e-mail valide.";
+      }
+
+      if (step === 4) {
+        for (const key of ["first", "last", "address", "postal", "city"]) {
+          if (!String(profile[key] || "").trim()) errors[key] = required;
+        }
+
+        const age = ageInYears(profile.birth);
+
+        if (age === null || age < 0) {
+          errors.birth = "Saisissez une date valide au format JJ/MM/AAAA.";
+        } else if (age < 18) {
+          errors.birth = "Vous devez avoir au moins 18 ans pour poursuivre.";
+        }
+      }
+
+      if (Object.keys(errors).length) {
+        render();
+        document.getElementById(Object.keys(errors)[0])?.focus();
+        announce(Object.values(errors).join(" "));
+        return false;
+      }
+
+      return true;
+    }
+
+    function paymentCard(value, title, subtitle) {
+      const selected = (profile.choice || "now") === value;
+
+      return `
+        <div class="card ${selected ? "selected" : ""}"
+          role="radio" aria-checked="${selected}"
+          tabindex="${selected ? 0 : -1}"
+          data-choice="${value}">
+          <span class="radio">
+            ${selected ? icon("check", 16) : ""}
+          </span>
+          ${icon("card", 28)}
+          <h2>${title}</h2>
+          <strong>${subtitle}</strong>
+          <p>Simulation sans débit</p>
+          ${value === "three" ? `
+            <span class="badge">Simulation</span>
+            <div class="row">
+              <span>0,00 € aujourd’hui</span>
+              <strong>Total 0,00 €</strong>
+            </div>` : ""}
+        </div>
+      `;
+    }
+
+    function render() {
+      const firstScreen = step === 1 || step === "return" || step === "closed";
+
+      $("#header").innerHTML = `
+        ${firstScreen
+          ? '<span class="header-space"></span>'
+          : `<button class="icon-button" data-action="back"
+              aria-label="Retour">${icon("back")}</button>`}
+        <div class="logo">Vince <span>Pay</span></div>
+        <button class="icon-button" data-action="exit"
+          aria-label="Fermer le parcours">${icon("close")}</button>
+      `;
+
+      $("#progress").style.width =
+        typeof step === "number" ? Math.min(step / 8 * 100, 100) + "%" : "0%";
+
+      $("#footer").innerHTML = `
+        <div class="footer-links">
+          ${link("Conditions d’utilisation", "terms")}
+          ${link("Confidentialité", "privacy")}
+          ${link("Cookies", "cookies")}
+          ${link("À propos", "about")}
+      `;
+
+      let html = '<div class="notice">Prototype Vince Pay</div>';
+
+      if (step === "return") {
+        html += `
+          <div class="avatar">${initials()}</div>
+          <h1 class="center">Est-ce votre compte ?</h1>
+          <p class="center">
+            ${escapeHTML(profile.first || "Profil Vince Pay")}<br>
+            ${escapeHTML(profile.email || fullPhone())}
+          </p>
+          <p class="fine">
+            Ce profil est mémorisé uniquement dans ce navigateur.
+          </p>
+          ${button("Oui, reprendre le parcours", "resume")}
+          ${button("Non, effacer et recommencer", "erase", true)}
+        `;
+      }
+
+      if (step === 1) {
+        html += `
+          <h1>Bienvenue chez<br>Vince Pay</h1>
+          <p>
+            Découvrez Vince Pay.
+          </p>
+
+          <button class="row country" data-action="country">
+            ${icon("globe")}
+            <span>${escapeHTML(profile.country || "France")}</span>
+            <strong>${countryConfig().dial}</strong>
+            ${icon("chevron", 18)}
+          </button>
+
+          <div class="phone-box ${errors.phone ? "error-box" : ""}">
+            <span class="prefix">${countryConfig().dial}</span>
+            ${field("phone", "Numéro de mobile", { type: "tel" })}
+          </div>
+
+          <div class="benefits">
+            <div class="benefit">
+              ${icon("shield")}
+              <span>Une interface simple pour suivre vos paiements</span>
+            </div>
+            <div class="benefit">
+              ${icon("info")}
+              <span>Des informations claires à chaque étape</span>
+            </div>
+            <div class="benefit">
+              ${icon("spark")}
+              <span>Un parcours simple, sans débit</span>
+            </div>
+          </div>
+
+          ${button("Continuer", "submit")}
+          ${button("Connexion avec l’appli Vince Pay", "app", true)}
+
+          <p class="fine center">
+            Découvrez l’${link("application Vince Pay", "app")}
+          </p>
+        `;
+      }
+
+      if (step === 2) {
+        html += `
+          <h1>Saisissez le code à 6 chiffres</h1>
+          <p>Poursuivez votre parcours avec Vince Pay.</p>
+          <p class="fine">
+            ${escapeHTML(fullPhone())}
+            ${link("Modifier", "edit-phone")}
+          </p>
+          ${field("code", "Saisir le code", {
+            icon: "phone", numeric: true, max: 6
+          })}
+          ${button("Continuer", "submit")}
+        `;
+      }
+
+      if (step === 3) {
+        html += `
+          <h1>Quelle est votre adresse e-mail ?</h1>
+          ${field("email", "E-mail", { icon: "mail", type: "email" })}
+          <label class="check">
+            <input id="news" type="checkbox" ${profile.news ? "checked" : ""}>
+            <span>Je souhaite recevoir des informations sur Vince Pay.</span>
+          </label>
+          <p class="fine">Préférence locale uniquement, aucune inscription.</p>
+          <p class="fine">
+            ${link("Conditions d’utilisation", "terms")} ·
+            ${link("Politique de confidentialité", "privacy")} ·
+            ${link("Politique des cookies", "cookies")}
+          </p>
+          ${button("Continuer", "submit")}
+        `;
+      }
+
+      if (step === 4) {
+        html += `
+          <h1>Dites-nous en un peu plus sur vous</h1>
+
+          <div class="group">
+            ${field("first", "Prénom")}
+            ${field("last", "Nom")}
+            ${field("birth", "Date de naissance", {
+              numeric: true, max: 10, help: true
+            })}
+          </div>
+
+          <p class="fine">
+            Pays de résidence :
+            ${escapeHTML(profile.country || "France")}.
+            ${link("Modifier", "country")}
+          </p>
+
+          <div class="group">
+            ${field("address", "Adresse")}
+            ${field("extra", "Complément d’adresse facultatif")}
+            ${field("postal", "Code postal")}
+            ${field("city", "Ville")}
+          </div>
+
+          ${button("Continuer", "submit")}
+        `;
+      }
+
+      if (step === 5) {
+        html += `
+          <div class="avatar">${initials()}</div>
+          <h1 class="center">
+            ${escapeHTML(profile.first)} ${escapeHTML(profile.last)}
+          </h1>
+          <p class="fine center">
+            ${escapeHTML(profile.email)}<br>
+            ${escapeHTML(fullPhone())}<br>
+            ${link("Modifier mes informations", "edit-profile")} ·
+            ${link("Modifier l’e-mail", "edit-email")}
+          </p>
+
+          <button class="row" data-action="shop">
+            <span>Boutique Vince Pay</span>
+            ${icon("chevron")}
+          </button>
+
+          <h2>Options de paiement</h2>
+          <p class="fine">Choisissez une option pour continuer</p>
+          <span class="badge">Étape suivante</span>
+
+          <button class="row" data-action="order">
+            <span>Montant de la commande</span>
+            <strong>0,00 € ${icon("chevron", 16)}</strong>
+          </button>
+
+          ${button("Choisissez comment payer", "load")}
+        `;
+      }
+
+      if (step === 6) {
+        html += `
+          <div class="center">
+            <div class="art" aria-hidden="true">
+              <div class="orb"></div>
+              <div class="art-card">
+                <strong>Vince Pay</strong><br><br>
+                •••• &nbsp; 2048
+              </div>
+              <div class="art-coin">${icon("check", 28)}</div>
+            </div>
+            <h1>Préparation de vos options</h1>
+            <p>Un instant, nous y sommes presque</p>
+            <span class="spinner" role="status" aria-label="Chargement"></span>
+          </div>
+        `;
+      }
+
+      if (step === 7) {
+        html += `
+          <h1>À votre rythme.</h1>
+          <p>Choisissez comment payer, en toute simplicité.</p>
+
+          <div role="radiogroup" aria-label="Options de paiement">
+            ${paymentCard("now", "Payez maintenant", "0 € aujourd’hui")}
+            <div class="divider">Autres options</div>
+            ${paymentCard("three", "Paiement en 3 fois", "0 € par mois")}
+          </div>
+
+          <p class="fine center">
+            ${link("Vous ne trouvez pas votre option préférée ?", "options")}
+          </p>
+
+          ${button("Continuer", "submit")}
+        `;
+      }
+
+      if (step === 8) {
+        html += `
+          <h1>Ajouter un moyen de paiement</h1>
+          <p id="test-notice">
+            Saisissez uniquement des informations.
+          </p>
+
+          ${button("paiement mobile", "mobile", true)}
+
+          <div class="divider">ou</div>
+
+          <div class="green fine" id="test-values">
+            <strong>4242 4242 4242 4242</strong><br>
+            Date : <strong>12/30</strong> · CVC : <strong>123</strong>
+          </div>
+
+          <label class="fixed-label" for="testcard">
+            ${icon("card", 16)} Numéro de carte
+          </label>
+          <input id="testcard" class="test-input"
+            inputmode="numeric" maxlength="19" autocomplete="off"
+            aria-describedby="test-notice test-values">
+
+          <div class="columns">
+            <div>
+              <label class="fixed-label" for="expiry">
+                ${icon("calendar", 16)} Date d’expiration
+              </label>
+              <input id="expiry" class="test-input"
+                inputmode="numeric" maxlength="5" autocomplete="off"
+                aria-describedby="test-values">
+            </div>
+
+            <div>
+              <label class="fixed-label" for="cvc">
+                ${icon("lock", 16)} CVC de test
+              </label>
+              <input id="cvc" class="test-input"
+                inputmode="numeric" maxlength="3" autocomplete="off"
+                aria-describedby="test-values">
+            </div>
+          </div>
+
+          <p id="card-error" class="error-message" role="alert"></p>
+
+          <p class="fine">
+            Ces champs acceptent uniquement les données de test ci-dessus.
+          </p>
+
+          <div class="row">
+            <span>Montant total</span>
+            <strong>0,00 €</strong>
+          </div>
+
+          ${button("Valider", "finish")}
+        `;
+      }
+
+      if (step === 9) {
+        html += `
+          <div class="success">${icon("check", 42)}</div>
+          <h1 class="center">
+            Parcours terminé
+          </h1>
+          <p class="center">
+            Vous avez découvert le parcours Vince Pay.
+          </p>
+          <div class="green">
+           terminée<br>
+            <strong>Total : 0,00 € · Aucun débit</strong>
+          </div>
+          ${button("Revoir mon profil", "summary")}
+          ${button("Effacer mon profil", "erase", true)}
+        `;
+      }
+
+      if (step === "closed") {
+        html += `
+          <h1>À bientôt chez Vince Pay</h1>
+          <p>Votre profil reste disponible dans ce navigateur.</p>
+          ${button("Reprendre le parcours", "resume")}
+          ${button("Effacer les données locales", "erase", true)}
+        `;
+      }
+
+      $("#main").innerHTML = html;
+    }
+
+    function openModal(title, content) {
+      const dialog = $("#modal");
+
+      if (!dialog.open) modalOrigin = document.activeElement;
+
+      dialog.innerHTML = `
+        <div class="modal-close">
+          <button class="icon-button" data-action="close-modal"
+            aria-label="Fermer">${icon("close")}</button>
+        </div>
+        <h2 id="modal-title">${title}</h2>
+        ${content}
+      `;
+
+      if (!dialog.open) dialog.showModal();
+
+      dialog.querySelector("button, input, select")?.focus();
+    }
+
+    function closeModal() {
+      $("#modal").close();
+
+      if (modalOrigin?.isConnected) {
+        modalOrigin.focus();
+      } else {
+        $("#main").focus();
+      }
+    }
+
+    function legal(kind) {
+      const contents = {
+        terms: [
+          "Conditions d’utilisation",
+        ],
+        privacy: [
+          "Confidentialité",
+          "Le profi est conservé dans le stockage local de ce navigateur. Les champs de carte de test ne sont jamais enregistrés ni transmis. Vous pouvez effacer votre profil à tout moment. L’hébergement peut traiter les informations techniques nécessaires à l’accès au site."
+        ],
+        cookies: [
+          "Cookies",
+          Le stockage local sert à retrouver votre profil fictif sur ce navigateur."
+        ],
+        about: [
+          "À propos de Vince Pay",
+          "Vince Pay est un concept d’interface. Le montant de la commande est de 0€.
+        ]
+      };
+
+      const [title, text] = contents[kind];
+
+      openModal(
+        title,
+        `<p>${text}</p>
+        ${kind === "privacy" || kind === "cookies"
+          ? button("Effacer les données locales", "erase", true)
+          : ""}
+        ${button("Fermer", "close-modal")}`
+      );
+    }
+
+    function selectPayment(value) {
+      profile.choice = value;
+      save();
+      render();
+      document.querySelector(`[data-choice="${value}"]`)?.focus();
+      announce(value === "three"
+        ? "Paiement en trois fois sélectionné."
+        : "Paiement immédiat sélectionné.");
+    }
+
+    function action(name, source) {
+      if (["terms", "privacy", "cookies", "about"].includes(name)) {
+        legal(name);
+        return;
+      }
+
+      switch (name) {
+        case "submit":
+          if (validate()) go(step === 7 ? 8 : step + 1);
+          break;
+
+        case "back":
+          go(step === 7 ? 5 : Math.max(1, Number(step) - 1));
+          break;
+
+        case "country":
+          openModal("Choisir un pays", `
+            <label class="fixed-label" for="country-select">Pays</label>
+            <select id="country-select">
+              ${Object.entries(countries).map(([country, config]) => `
+                <option value="${country}"
+                  ${(profile.country || "France") === country ? "selected" : ""}>
+                  ${country} (${config.dial})
+                </option>`).join("")}
+            </select>
+            ${button("Confirmer", "confirm-country")}
+          `);
+          break;
+
+        case "confirm-country":
+          profile.country = $("#country-select").value;
+          profile.phone = formatPhone(profile.phone || "");
+          save();
+          closeModal();
+          render();
+          document.querySelector('[data-action="country"]')?.focus();
+          break;
+
+        case "app":
+          openModal("Vince Pay", `
+            <div class="app-icon">V</div>
+            <span class="badge">Application indisponible</span>
+            <p>
+              Cette fiche présente le concept de l’application Vince Pay.
+              Aucune application n’est actuellement disponible à installer.
+            </p>
+            ${button("Explorer le parcours", "explore")}
+            ${button("Fermer", "close-modal", true)}
+          `);
+          break;
+
+        case "explore":
+          closeModal();
+          go(1);
+          $("#phone")?.focus();
+          break;
+
+        case "birth-help":
+          openModal("Date de naissance", `
+            <p>
+              Format attendu : JJ/MM/AAAA, par exemple 15/06/1995.
+              Utilisez une date correspondant à un âge de 18 ans ou plus.
+            </p>
+            ${button("Compris", "close-modal")}
+          `);
+          break;
+
+        case "edit-phone": go(1); break;
+        case "edit-email": go(3); break;
+        case "edit-profile": go(4); break;
+        case "load": go(6); break;
+        case "summary": go(5); break;
+
+        case "shop":
+          openModal("Boutique Vince Pay", `
+            <p>Boutique. Aucun produit ne sera expédié.</p>
+            ${button("Voir la commande", "order")}
+          `);
+          break;
+
+        case "order":
+          openModal("Votre commande", `
+            <div class="row">
+              <span>Article × 1</span>
+              <strong>0,00 €</strong>
+            </div>
+            <p>Livraison offerte. Total : 0,00 €.</p>
+            ${button("Fermer", "close-modal")}
+          `);
+          break;
+
+        case "options":
+          openModal("Options disponibles", `
+            <p>
+              Deux options sont proposées :
+              paiement immédiat ou paiement en trois fois.
+              Le montant total est de 0 € dans les deux cas.
+            </p>
+            ${button("Compris", "close-modal")}
+          `);
+          break;
+
+        case "mobile":
+          openModal("Simulation mobile Vince Pay", `
+            <div class="app-icon">V</div>
+            <h2>0,00 €</h2>
+            ${button("Confirmer ", "confirm-mobile")}
+            ${button("Retour au formulaire", "close-modal", true)}
+          `);
+          break;
+
+        case "confirm-mobile":
+          closeModal();
+          go(9);
+          break;
+
+        case "finish": {
+          const number = $("#testcard").value.replace(/\D/g, "");
+          const expiry = $("#expiry").value.trim();
+          const cvc = $("#cvc").value.trim();
+
+          const invalid = [
+            number !== "4242424242424242" ? "testcard" : null,
+            expiry !== "12/30" ? "expiry" : null,
+            cvc !== "123" ? "cvc" : null
+          ].filter(Boolean);
+
+          for (const id of ["testcard", "expiry", "cvc"]) {
+            const input = document.getElementById(id);
+            const bad = invalid.includes(id);
+
+            input.classList.toggle("error-box", bad);
+            input.setAttribute("aria-invalid", String(bad));
+
+            if (bad) input.setAttribute("aria-describedby", "card-error");
+          }
+
+          if (invalid.length) {
+            $("#card-error").
+            document.getElementById(invalid[0]).focus();
+            break;
+          }
+
+          source.disabled = true;
+          source.innerHTML =
+            '<span class="spinner"></span>Validation…';
+
+          timer = setTimeout(() => go(9), 700);
+          break;
+        }
+
+        case "resume":
+          go(Math.min(Math.max(Number(profile.lastStep) || 1, 1), 9));
+          break;
+
+        case "exit":
+          if (profile.phone || profile.email || profile.first) {
+            openModal("Quitter le parcours ?", `
+              <p>
+                Votre profil restera mémorisé dans ce navigateur.
+                Vous pourrez reprendre plus tard.
+              </p>
+              ${button("Continuer le parcours", "close-modal")}
+              ${button("Quitter", "quit", true)}
+            `);
+          } else {
+            go("closed");
+          }
+          break;
+
+        case "quit":
+          closeModal();
+          go("closed");
+          break;
+
+        case "erase":
+          openModal("Effacer le profil ?", 
+            ${button("Effacer et recommencer", "confirm-erase")}
+            ${button("Conserver mon profil", "close-modal", true)}
+          `);
+          break;
+
+        case "confirm-erase":
+          try { localStorage.removeItem(STORAGE_KEY); } catch {}
+          profile = {};
+          code = "";
+          closeModal();
+          go(1);
+          announce("Profil effacé.");
+          break;
+
+        case "close-modal":
+          closeModal();
+          break;
+      }
+    }
+
+    document.addEventListener("input", event => {
+      const input = event.target;
+      if (!input.matches("input") || !input.closest("#main")) return;
+
+      const id = input.id;
+      let value = input.value;
+      const atEnd = input.selectionStart === input.value.length;
+      const position = input.selectionStart;
+
+      if (id === "phone") value = formatPhone(value);
+
+      if (id === "birth") {
+        const digits = value.replace(/\D/g, "").slice(0, 8);
+        value = [
+          digits.slice(0, 2),
+          digits.slice(2, 4),
+          digits.slice(4, 8)
+        ].filter(Boolean).join("/");
+      }
+
+      if (id === "code") {
+        value = value.replace(/\D/g, "").slice(0, 6);
+      }
+
+      if (id === "testcard") {
+        value = value.replace(/\D/g, "").slice(0, 16)
+          .match(/.{1,4}/g)?.join(" ") || "";
+      }
+
+      if (id === "expiry") {
+        const digits = value.replace(/\D/g, "").slice(0, 4);
+        value = [digits.slice(0, 2), digits.slice(2)]
+          .filter(Boolean).join("/");
+      }
+
+      if (id === "cvc") {
+        value = value.replace(/\D/g, "").slice(0, 3);
+      }
+
+      if (input.value !== value) {
+        input.value = value;
+
+        if (position !== null && input.type !== "email") {
+          const caret = atEnd ? value.length : Math.min(position, value.length);
+          input.setSelectionRange(caret, caret);
+        }
+      }
+
+      // Les champs de carte ne sont jamais copiés dans le profil.
+      if (["testcard", "expiry", "cvc"].includes(id)) return;
+
+      if (id === "code") {
+        code = value;
+        return;
+      }
+
+      if (profileKeys.includes(id)) {
+        profile[id] = input.type === "checkbox" ? input.checked : value;
+        save();
+      }
+    });
+
+    document.addEventListener("click", event => {
+      const card = event.target.closest("[data-choice]");
+
+      if (card) {
+        selectPayment(card.dataset.choice);
+        return;
+      }
+
+      const control = event.target.closest("[data-action]");
+      if (control) action(control.dataset.action, control);
+    });
+
+    document.addEventListener("keydown", event => {
+      const card = event.target.closest("[data-choice]");
+
+      if (
+        card &&
+        ["Enter", " ", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"]
+          .includes(event.key)
+      ) {
+        event.preventDefault();
+
+        selectPayment(
+          ["Enter", " "].includes(event.key)
+            ? card.dataset.choice
+            : (profile.choice || "now") === "now" ? "three" : "now"
+        );
+        return;
+      }
+
+      if (
+        event.key === "Enter" &&
+        event.target.matches("#main input") &&
+        event.target.type !== "checkbox"
+      ) {
+        event.preventDefault();
+
+        const submit = document.querySelector(
+          step === 8
+            ? '[data-action="finish"]'
+            : '[data-action="submit"]'
+        );
+
+        if (submit && !submit.disabled) {
+          action(submit.dataset.action, submit);
+        }
+      }
+    });
+
+    $("#modal").addEventListener("cancel", event => {
+      event.preventDefault();
+      closeModal();
+    });
+
+    $("#modal").addEventListener("click", event => {
+      if (event.target !== $("#modal")) return;
+
+      const box = $("#modal").getBoundingClientRect();
+
+      if (
+        event.clientX < box.left ||
+        event.clientX > box.right ||
+        event.clientY < box.top ||
+        event.clientY > box.bottom
+      ) closeModal();
+    });
+
+    render();
+  </script>
+</body>
+</html>
